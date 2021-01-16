@@ -1,4 +1,3 @@
-require 'byebug'
 class CrossedWires
   attr_reader :data, :wires
 
@@ -20,27 +19,22 @@ class CrossedWires
     data.each do |line|
       c = 0
       r = 0
-      # debugger
       line.chomp.split(',').each do |ins|
         dir = ins.scan(/\D/)[0]
         q = ins.scan(/\d/).join.to_i
         case dir
         when 'U'
-          c+=1
-          (c..c+(q-1)).each {|i| wires[wire] << [i, r] }
-          c+=(q-1)
+          ((c+1)..c+q).each {|i| wires[wire] << [i, r] }
+          c+=q
         when 'D'
-          c-=1
-          c.downto(c-(q-1)).each {|i| wires[wire] << [i, r] }
-          c-=(q-1)
+          (c-1).downto(c-q).each {|i| wires[wire] << [i, r] }
+          c-=q
         when 'R'
-          r+=1
-          (r..r+(q-1)).each {|i| wires[wire] << [c, i] }
-          r+=(q-1)
+          ((r+1)..r+q).each {|i| wires[wire] << [c, i] }
+          r+=q
         when 'L'
-          r-=1
-          r.downto(r-(q-1)).each {|i| wires[wire] << [c, i] }
-          r-=(q-1)
+          (r-1).downto(r-q).each {|i| wires[wire] << [c, i] }
+          r-=q
         end
       end
       wire += 1
