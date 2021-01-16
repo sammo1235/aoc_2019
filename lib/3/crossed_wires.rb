@@ -4,11 +4,19 @@ class CrossedWires
 
   def initialize(file)
     @data = File.open(file, 'r').readlines
-    @wires = { "1" => [], "2" => [] }
+    @wires = [[], []]
   end
 
   def part_one
-    wire = 1
+    wire_path
+  end
+
+  def part_two
+    wire_path(false)
+  end
+
+  def wire_path(p1 = true)
+    wire = 0
     data.each do |line|
       c = 0
       r = 0
@@ -18,21 +26,36 @@ class CrossedWires
         q = ins.scan(/\d/).join.to_i
         case dir
         when 'U'
-          (c..c+q).each {|i| wires[wire.to_s] << [i, r] }
-          c+=q
+          c+=1
+          (c..c+(q-1)).each {|i| wires[wire] << [i, r] }
+          c+=(q-1)
         when 'D'
-          c.downto(c-q).each {|i| wires[wire.to_s] << [i, r] }
-          c-=q
+          c-=1
+          c.downto(c-(q-1)).each {|i| wires[wire] << [i, r] }
+          c-=(q-1)
         when 'R'
-          (r..r+q).each {|i| wires[wire.to_s] << [c, i] }
-          r+=q
+          r+=1
+          (r..r+(q-1)).each {|i| wires[wire] << [c, i] }
+          r+=(q-1)
         when 'L'
-          r.downto(r-q).each {|i| wires[wire.to_s] << [c, i] }
-          r-=q
+          r-=1
+          r.downto(r-(q-1)).each {|i| wires[wire] << [c, i] }
+          r-=(q-1)
         end
       end
       wire += 1
     end
-    (wires["1"] & wires["2"]).map {|coord| coord.map {|i| i.abs }}.map(&:sum).map(&:abs).uniq.sort[1]
+    p1 ? closest_crossing : fewest_steps_to_crossing
+  end
+
+  def closest_crossing
+    (wires[0] & wires[1]).map { |coord| coord.map(&:abs) }.map(&:sum).uniq.sort.first
+  end
+
+  def fewest_steps_to_crossing
+    crossings = wires[0] & wires[1]
+    crossings.each_with_object([]) do |c, obj|
+      obj << (wires[0].index(c)+1) + (wires[1].index(c)+1)
+    end.min
   end
 end
