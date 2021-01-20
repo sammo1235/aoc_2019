@@ -12,28 +12,26 @@ class Cpu
 
   def compute(parameter_mode: false, diagnostic_mode: false)
     while true
-      major_skip = true
       opcode = input[ind]
+      major_skip = ![3, 4].include?(opcode)
+
       store_position = input[ind+3]
 
       if diagnostic_mode
         return input if input[ind+1].nil? || opcode.nil? || opcode == 99
       end
 
-      if opcode == 99
-        return input[0]
-      end
+      return input[0] if opcode == 99
 
       if parameter_mode && opcode > 4
-        parameter_interpreter(ind, true, opcode)
+        parameter_interpreter(true, opcode)
         opcode = opcode.digits.first
       else
-        parameter_interpreter(ind, false)
+        parameter_interpreter(false)
       end
 
       run_opcode(opcode, store_position)
 
-      major_skip = false if [3, 4].include? opcode
       major_skip ? self.ind += 4 : self.ind += 2
     end
   end
@@ -41,9 +39,9 @@ class Cpu
   def run_opcode(opcode, store_position)
     case opcode
     when 1
-      input[store_position] = params["1"] + params["2"]
+      input[store_position] = params.values.reduce(&:+)
     when 2
-      input[store_position] = params["1"] * params["2"]
+      input[store_position] = params.values.reduce(&:*)
     when 3
       input[input[ind+1]] = 1
     when 4
@@ -51,21 +49,18 @@ class Cpu
     end
   end
 
-  def parameter_interpreter(index, parameter_mode = true, opcode = nil)
+  def parameter_interpreter(parameter_mode = true, opcode = nil)
     param_codes = if parameter_mode
-      opcode.digits[2..-1].map(&:zero?)
+      opcode.digits[2..-1].map(&:zero?) << true
     else
-      [true]
+      [true]*3
     end
 
-    while param_codes.size < 3
-      param_codes << true
-    end
     (1..2).each do |position|
       if param_codes[position-1] # position mode
-        params[position.to_s] = input[input[index+position]]
+        params[position.to_s] = input[input[ind+position]]
       else # immediate_mode
-        params[position.to_s] = input[index+position]
+        params[position.to_s] = input[ind+position]
       end
     end
   end
