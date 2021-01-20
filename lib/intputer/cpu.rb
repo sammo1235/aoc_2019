@@ -13,8 +13,6 @@ class Cpu
   def compute(parameter_mode: false, diagnostic_mode: false)
     while true
       opcode = input[ind]
-      major_skip = ![3, 4].include?(opcode)
-
       store_position = input[ind+3]
 
       if diagnostic_mode
@@ -24,15 +22,16 @@ class Cpu
       return input[0] if opcode == 99
 
       if parameter_mode && opcode > 4
-        parameter_interpreter(true, opcode)
+        parameter_interpreter(opcode)
         opcode = opcode.digits.first
       else
-        parameter_interpreter(false)
+        parameter_interpreter
       end
 
-      run_opcode(opcode, store_position)
+      out = run_opcode(opcode, store_position)
+      return out if out && out > 3 && opcode == 4
 
-      major_skip ? self.ind += 4 : self.ind += 2
+      [3, 4].include?(opcode) ? self.ind += 2 : self.ind += 4
     end
   end
 
@@ -45,15 +44,15 @@ class Cpu
     when 3
       input[input[ind+1]] = 1
     when 4
-      exit(0) if input[input[ind+1]] > 3
+      input[input[ind+1]]
     end
   end
 
-  def parameter_interpreter(parameter_mode = true, opcode = nil)
-    param_codes = if parameter_mode
+  def parameter_interpreter(opcode = nil)
+    param_codes = if opcode
       opcode.digits[2..-1].map(&:zero?) << true
     else
-      [true]*3
+      [true]*2
     end
 
     (1..2).each do |position|
