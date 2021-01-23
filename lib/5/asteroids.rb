@@ -22,6 +22,12 @@ class Asteroids
   end
 
   def part_two
-    # todo
+    Cpu.new(
+      get_input,
+      extend_thermal_radiators: true
+    ).compute(
+      parameter_mode: true,
+      diagnostic_mode: diagnostic_mode
+    )
   end
 end

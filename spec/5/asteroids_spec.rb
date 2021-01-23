@@ -19,5 +19,15 @@ RSpec.describe Asteroids do
         expect(asteroids.part_one).to eq(6745903)
       end
     end
+
+    describe '#part two' do
+      let(:asteroids) { described_class.new(
+        './spec/fixtures/data_day_5.txt',
+      ) }
+
+      it 'solves part two' do
+        expect(asteroids.part_two).to eq(9168267)
+      end
+    end
   end
 end
