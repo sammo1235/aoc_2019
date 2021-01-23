@@ -1,32 +1,24 @@
 require './lib/intputer/cpu'
 
 RSpec.describe Cpu do
-  let(:cpu) { described_class }
-  let(:diag) { { diagnostic_mode: true } }
-
   context 'with parameter mode off' do
     describe '#compute' do
       it 'adds if opcode is 1' do
-        expect(cpu.new([1,9,10,3,2,3,11,0,99,30,40,50], 1, true)
-          .compute)
+        expect(Cpu.new([1,9,10,3,2,3,11,0,99,30,40,50], 1, true).compute)
           .to eq([3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50])
 
-        expect(cpu.new([1,0,0,0,99], 1, true)
-          .compute)
+        expect(Cpu.new([1,0,0,0,99], 1, true).compute)
           .to eq([2,0,0,0,99])
 
-        expect(cpu.new([1,1,1,4,99,5,6,0,99], true)
-          .compute)
+        expect(Cpu.new([1,1,1,4,99,5,6,0,99], true).compute)
           .to eq([30,1,1,4,2,5,6,0,99])
       end
 
       it 'multiplies if opcode is 2' do
-        expect(cpu.new([2,3,0,3,99], true)
-          .compute)
+        expect(Cpu.new([2,3,0,3,99], true).compute)
           .to eq([2,3,0,6,99])
 
-        expect(cpu.new([2,4,4,5,99,0], true)
-          .compute)
+        expect(Cpu.new([2,4,4,5,99,0], true).compute)
           .to eq([2,4,4,5,99,9801])
       end
     end
@@ -35,24 +27,20 @@ RSpec.describe Cpu do
   context 'with parameter mode on' do
     describe '#compute' do
       it 'adds with parameterised opcode' do
-        expect(cpu.new([1101,100,-1,4,0], true)
-          .compute)
+        expect(Cpu.new([1101,100,-1,4,0], true).compute)
           .to eq([1101,100,-1,4,99])
       end
 
       it 'multiplies with parameterised opcode' do
-        expect(cpu.new([1002,4,3,4,33], true)
-          .compute)
+        expect(Cpu.new([1002,4,3,4,33], true).compute)
           .to eq([1002,4,3,4,99])
       end
 
       it 'accepts new opcodes and correctly computes them' do
-        expect(cpu.new([3,5,1101,100,-1,4,99], true)
-          .compute)
+        expect(Cpu.new([3,5,1101,100,-1,4,99], true).compute)
           .to eq([3,99,1101,100,-1,1,99])
 
-        expect(cpu.new([3,0,4,0,99], true)
-          .compute)
+        expect(Cpu.new([3,0,4,0,99], true).compute)
           .to eq([1,0,4,0,99])
       end
     end
@@ -64,15 +52,13 @@ RSpec.describe Cpu do
             opcode 8 should compare 1 and 8 in indices 9 and 10.
             If they are equal a 1 gets placed at store position (9).
             1 != 8 so 0 gets placed at index 9''' do
-        expect(cpu.new([3,9,8,9,10,9,4,9,99,-1,8], true)
-          .compute)
+        expect(Cpu.new([3,9,8,9,10,9,4,9,99,-1,8], true).compute)
           .to eq([3,9,8,9,10,9,4,9,99,0,8])
       end
 
       it '''same as above but opcode 7 checks if index 9 is less
             than index 10''' do
-        expect(cpu.new([3,9,7,9,10,9,4,9,99,-1,8], true)
-          .compute)
+        expect(Cpu.new([3,9,7,9,10,9,4,9,99,-1,8], true).compute)
           .to eq([3,9,7,9,10,9,4,9,99,1,8])
       end
     end
@@ -81,29 +67,25 @@ RSpec.describe Cpu do
       it '''opcode 8 now compares the two immediate params but
             still places them in position mode.
             -1 != 8 so 0 gets placed at index 3''' do
-          expect(cpu.new([3,3,1108,-1,8,3,4,3,99], true) # input = 1
-            .compute)
+          expect(Cpu.new([3,3,1108,-1,8,3,4,3,99], true).compute)
             .to eq([3,3,1108,0,8,3,4,3,99])
       end
 
       it '''7 in immediate mode checks if param 1 is < param 2,
             then places 1 (true) or 0 (false) in pos of param 3''' do
-          expect(cpu.new([3,3,1107,-1,8,3,4,3,99], true) # input = 1
-            .compute)
+          expect(Cpu.new([3,3,1107,-1,8,3,4,3,99], true).compute)
             .to eq([3,3,1107,1,8,3,4,3,99])
       end
     end
 
     describe '#compute with position mode' do
       it 'opcode 6 jumps correctly - outputs 0 if input was 0 or 1 if non-zero' do
-        expect(cpu.new([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9]) # input = 1
-          .compute)
+        expect(Cpu.new([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9]).compute)
           .to eq(1)
       end
 
       it 'opcode 5 jumps in immediate mode' do
-        expect(cpu.new([3,3,1105,-1,9,1101,0,0,12,4,12,99,1])
-          .compute)
+        expect(Cpu.new([3,3,1105,-1,9,1101,0,0,12,4,12,99,1]).compute)
           .to eq(1)
       end
     end
@@ -118,19 +100,19 @@ RSpec.describe Cpu do
 
     describe 'with input value below 8' do
       it 'should output 999' do
-        expect(cpu.new(input, false, 7).compute).to eq(999)
+        expect(Cpu.new(input, false, 7).compute).to eq(999)
       end
     end
 
     describe 'with input value of 8' do
       it 'should output 1000' do
-        expect(cpu.new(input, false, 8).compute).to eq(1000)
+        expect(Cpu.new(input, false, 8).compute).to eq(1000)
       end
     end
 
     describe 'with input value of > 8' do
       it 'should output 1001' do
-        expect(cpu.new(input, false, 11).compute).to eq(1001)
+        expect(Cpu.new(input, false, 11).compute).to eq(1001)
       end
     end
   end
