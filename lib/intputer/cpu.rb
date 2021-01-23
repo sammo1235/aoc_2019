@@ -32,8 +32,6 @@ class Cpu
         parameter_interpreter
       end
 
-      # puts "opcode: #{opcode}, index: #{ind}, params: #{params}"
-
       out = run_opcode(opcode, store_position)
 
       if out.is_a? Integer
@@ -41,14 +39,7 @@ class Cpu
         return out if opcode == 4 && out > 0
       end
 
-      case
-      when [5, 6].include?(opcode) && out
-        self.ind += 3
-      when [3, 4].include?(opcode)
-        self.ind += 2
-      when [1, 2, 7, 8].include?(opcode)
-        self.ind += 4
-      end
+      memory_position_discombobulator(opcode, out)
     end
   end
 
@@ -108,6 +99,17 @@ class Cpu
       else # immediate_mode
         params[position.to_s] = input[ind+position]
       end
+    end
+  end
+
+  def memory_position_discombobulator(opcode, output)
+    case
+    when [5, 6].include?(opcode) && output
+      self.ind += 3
+    when [3, 4].include?(opcode)
+      self.ind += 2
+    when [1, 2, 7, 8].include?(opcode)
+      self.ind += 4
     end
   end
 end
