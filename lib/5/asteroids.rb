@@ -13,21 +13,10 @@ class Asteroids
   end
 
   def part_one
-    Cpu.new(
-      get_input
-    ).compute(
-      parameter_mode: true,
-      diagnostic_mode: diagnostic_mode
-    )
+    Cpu.new(get_input, diagnostic_mode, 1).compute
   end
 
   def part_two
-    Cpu.new(
-      get_input,
-      extend_thermal_radiators: true
-    ).compute(
-      parameter_mode: true,
-      diagnostic_mode: diagnostic_mode
-    )
+    Cpu.new(get_input, diagnostic_mode, 5).compute
   end
 end

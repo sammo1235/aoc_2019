@@ -1,29 +1,31 @@
 require 'byebug'
 
 class Cpu
-  attr_accessor :ind, :input, :params, :extend_thermal_radiators, :quantum_fluctuating_input
+  attr_accessor :ind, :input, :params, :quantum_fluctuating_input, :diagnostic_mode
 
-  def initialize(input, quantum_fluctuating_input = nil, extend_thermal_radiators: false)
+  def initialize(input, diagnostic_mode = false, quantum_fluctuating_input = nil)
     @input = input
     @ind = 0
     @params = {}
-    @extend_thermal_radiators = extend_thermal_radiators
     @quantum_fluctuating_input = quantum_fluctuating_input
+    @diagnostic_mode = diagnostic_mode
   end
 
 
-  def compute(parameter_mode: false, diagnostic_mode: false)
+  def compute
     while true
       opcode = input[ind]
       store_position = input[ind+3]
 
-      if diagnostic_mode
-        return input if input[ind+1].nil? || opcode.nil? || opcode == 99
+      if opcode == 99
+        if diagnostic_mode
+          return input
+        else
+          return input[0]
+        end
       end
 
-      return input[0] if opcode == 99
-
-      if parameter_mode && opcode > 4 && opcode.digits.size > 1
+      if opcode.digits.size > 1
         parameter_interpreter(opcode)
         opcode = opcode.digits.first
       else
@@ -35,7 +37,7 @@ class Cpu
       out = run_opcode(opcode, store_position)
 
       if out.is_a? Integer
-        return input if opcode == 4 && diagnostic_mode # for testing, we want the whole output
+        return input if opcode == 4 && diagnostic_mode
         return out if opcode == 4 && out > 0
       end
 
@@ -57,30 +59,26 @@ class Cpu
     when 2
       input[store_position] = params.values.reduce(&:*)
     when 3
-      input[input[ind+1]] = if extend_thermal_radiators
-        5
-      elsif quantum_fluctuating_input
+      input[input[ind+1]] = if quantum_fluctuating_input
         quantum_fluctuating_input
       else
         1
       end
     when 4
-      # when 104, output immediate next value
-      # when 4, output index of next value
       params.values.first
     when 5
       if !params.values[0].zero?
         self.ind = params.values[1]
         return false
       else
-        return true # jump 3 / ignore
+        return true
       end
     when 6
       if params.values[0].zero?
         self.ind = params.values[1]
         return false
       else
-        return true # jump 3 / ingore
+        return true
       end
     when 7
       if params.values[0] < params.values[1]
