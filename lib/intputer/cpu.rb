@@ -11,7 +11,6 @@ class Cpu
     @diagnostic_mode = diagnostic_mode
   end
 
-
   def compute
     while true
       opcode = input[ind]
@@ -34,9 +33,9 @@ class Cpu
 
       out = run_opcode(opcode, store_position)
 
-      if out.is_a? Integer
-        return input if opcode == 4 && diagnostic_mode
-        return out if opcode == 4 && out > 0
+      if opcode == 4
+        return input if diagnostic_mode
+        return out if out > 0
       end
 
       memory_position_discombobulator(opcode, out)
