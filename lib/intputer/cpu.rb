@@ -1,13 +1,14 @@
 require 'byebug'
 
 class Cpu
-  attr_accessor :ind, :input, :params, :quantum_fluctuating_input, :diagnostic_mode
+  attr_accessor :ind, :input, :params, :quantum_fluctuating_input, :phase_setting, :diagnostic_mode
 
-  def initialize(input, diagnostic_mode = false, quantum_fluctuating_input = nil)
+  def initialize(input, diagnostic_mode = false, quantum_fluctuating_input = nil, phase_setting = nil)
     @input = input
     @ind = 0
     @params = {}
     @quantum_fluctuating_input = quantum_fluctuating_input
+    @phase_setting = phase_setting
     @diagnostic_mode = diagnostic_mode
   end
 
@@ -49,11 +50,14 @@ class Cpu
     when 2
       input[store_position] = params.values.reduce(&:*)
     when 3
-      input[input[ind+1]] = if quantum_fluctuating_input
+      input[input[ind+1]] = if phase_setting
+        phase_setting
+      elsif quantum_fluctuating_input
         quantum_fluctuating_input
       else
         1
       end
+      self.phase_setting = nil if self.phase_setting
     when 4
       params.values.first
     when 5
