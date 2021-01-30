@@ -7,7 +7,7 @@ RSpec.describe Alarm do
   context 'with sample data' do
     describe '#part one' do
       it 'solves part one' do
-        expect(sample_alarm.part_one).to eq(3500)
+        expect(sample_alarm.part_one[1]).to eq(3500)
       end
     end
   end
@@ -15,7 +15,7 @@ RSpec.describe Alarm do
   context 'with problem data' do
     describe '#part one' do
       it 'solves part one' do
-        expect(real_alarm.part_one).to eq(2890696)
+        expect(real_alarm.part_one[1]).to eq(2890696)
       end
     end
 

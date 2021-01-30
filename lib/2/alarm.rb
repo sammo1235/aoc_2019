@@ -21,7 +21,7 @@ class Alarm
         arr = get_input
         arr[1] = a
         arr[2] = b
-        if Cpu.new(arr).compute == 19690720
+        if Cpu.new(arr).compute[1] == 19690720
           return 100 * a + b
         end
       end

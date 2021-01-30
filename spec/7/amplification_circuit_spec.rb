@@ -23,15 +23,25 @@ RSpec.describe AmplificationCircuit do
     end
   end
 
-  # context 'with sample part two data' do
-  #   let(:orbits) { described_class.new('./spec/fixtures/sample_2_day_6.txt') }
+  context 'with sample part two data' do
+    let(:amp) { described_class.new('./spec/fixtures/sample_3_day_7.txt', [9,8,7,6,5]) }
 
-  #   describe '#part_two' do
-  #     it 'returns hops between you and SAN' do
-  #       expect(orbits.part_two).to eq(4)
-  #     end
-  #   end
-  # end
+    describe '#part_two' do
+      it 'returns max thruster signal after sending the above sequence through the feedback loop' do
+        expect(amp.part_two).to eq(139629729)
+      end
+    end
+  end
+
+  context 'with sample part two data' do
+    let(:amp) { described_class.new('./spec/fixtures/sample_4_day_7.txt', [9,7,8,5,6]) }
+
+    describe '#part_two' do
+      it 'returns max thruster signal after sending the above sequence through the feedback loop' do
+        expect(amp.part_two).to eq(18216)
+      end
+    end
+  end
 
   context 'with problem data' do
     describe '#part one' do
@@ -40,11 +50,10 @@ RSpec.describe AmplificationCircuit do
       end
     end
 
-    # describe '#part two' do
-    #   it '''counts number of hops between object you are orbiting
-    #         and the object SAN is orbiting''' do
-    #     expect(orbits.part_two).to eq(550)
-    #   end
-    # end
+    describe '#part two' do
+      it 'returns max thruster signal after sending the above sequence through the feedback loop' do
+        expect(amp.part_two).to eq(4931744)
+      end
+    end
   end
 end
