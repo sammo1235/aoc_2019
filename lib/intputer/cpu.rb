@@ -1,7 +1,7 @@
 require 'byebug'
 
 class Cpu
-  attr_accessor :ind, :input, :params, :quantum_fluctuating_input, :diagnostic_mode, :phase_setting
+  attr_accessor :ind, :quantum_fluctuating_input, :phase_setting
 
   def initialize(input, diagnostic_mode = false, quantum_fluctuating_input = nil, phase_setting = nil)
     @input = input
@@ -18,7 +18,7 @@ class Cpu
       store_position = input[ind+3]
 
       if opcode == 99
-        if diagnostic_mode
+        if @diagnostic_mode
           return input
         else
           return [true, input[0]]
@@ -35,13 +35,15 @@ class Cpu
       out = run_opcode(opcode, store_position)
 
       if opcode == 4
-        return input if diagnostic_mode
+        return input if @diagnostic_mode
         return out if out > 0
       end
 
       memory_position_discombobulator(opcode, out)
     end
   end
+
+  private
 
   def run_opcode(opcode, store_position)
     case opcode
@@ -50,26 +52,26 @@ class Cpu
     when 2
       input[store_position] = params.values.reduce(&:*)
     when 3
-      input[input[ind+1]] = if self.phase_setting
-        self.phase_setting
+      input[input[ind+1]] = if phase_setting
+        phase_setting
       elsif quantum_fluctuating_input
         quantum_fluctuating_input
       else
         1
       end
-      self.phase_setting = nil if self.phase_setting
+      @phase_setting = nil if @phase_setting
     when 4
       params.values.first
     when 5
       if !params.values[0].zero?
-        self.ind = params.values[1]
+        @ind = params.values[1]
         return false
       else
         return true
       end
     when 6
       if params.values[0].zero?
-        self.ind = params.values[1]
+        @ind = params.values[1]
         return false
       else
         return true
@@ -108,11 +110,13 @@ class Cpu
   def memory_position_discombobulator(opcode, output)
     case
     when [5, 6].include?(opcode) && output
-      self.ind += 3
+      @ind += 3
     when [3, 4].include?(opcode)
-      self.ind += 2
+      @ind += 2
     when [1, 2, 7, 8].include?(opcode)
-      self.ind += 4
+      @ind += 4
     end
   end
+
+  attr_accessor :input, :params
 end
