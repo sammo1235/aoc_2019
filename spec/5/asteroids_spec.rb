@@ -4,7 +4,7 @@ RSpec.describe Asteroids do
   let(:asteroids) { described_class.new('./spec/fixtures/data_day_5.txt') }
 
   context 'with sample data' do
-    let(:asteroids) { described_class.new('./spec/fixtures/sample_day_5.txt', diagnostic_mode: true) }
+    let(:asteroids) { described_class.new('./spec/fixtures/sample_day_5.txt', true) }
 
     describe '#part_one' do
       it 'solves part one' do

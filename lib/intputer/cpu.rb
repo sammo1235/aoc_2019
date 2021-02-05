@@ -1,19 +1,26 @@
 require 'byebug'
+require_relative 'error_checker'
 
 class Cpu
-  attr_accessor :ind, :quantum_fluctuating_input, :phase_setting
+  attr_reader :diagnostic_mode
+  attr_accessor :ind, :input, :quantum_fluctuating_input, :phase_setting
 
   def initialize(input, diagnostic_mode = false, quantum_fluctuating_input = nil, phase_setting = nil)
     @input = input
     @ind = 0
     @params = {}
-    @quantum_fluctuating_input = quantum_fluctuating_input
     @diagnostic_mode = diagnostic_mode
+    @quantum_fluctuating_input = quantum_fluctuating_input
     @phase_setting = phase_setting
+    ErrorChecker.new(self)
   end
 
   def compute
     while true
+      if ind < 0 || ind > input.size - 1
+        raise PointerOutOfBoundsException.new("#{ind} is not within program opcode bounds")
+      end
+
       opcode = input[ind]
       store_position = input[ind+3]
 
@@ -118,5 +125,5 @@ class Cpu
     end
   end
 
-  attr_accessor :input, :params
+  attr_accessor :params
 end

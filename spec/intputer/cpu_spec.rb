@@ -1,13 +1,58 @@
 require './lib/intputer/cpu'
 
 RSpec.describe Cpu do
+  context 'with malformed input' do
+    describe '#initialize' do
+      it 'raises an InputException' do
+        expect { Cpu.new(70909) }
+        .to raise_error(InputException, "Program must be of type Array but is an Integer")
+      end
+    end
+  end
+
+
+  context 'with other incorrect parameters' do
+    describe '#initialize' do
+      it 'should raise an ArgumentError with int as diagnostic flag' do
+        expect { Cpu.new([1, 2, 3], 1, true) }
+        .to raise_error(ArgumentError, 'Diagnostic flag must be a boolean')
+      end
+
+      it 'should raise an ArgumentError with quantum fluctuating input not an int' do
+        expect { Cpu.new([1, 2, 3], true, "I shouldn't be here") }
+        .to raise_error(ArgumentError, 'quantum_fluctuating_input must be an Integer')
+      end
+
+      it 'should raise an ArgumentError with phase setting not an int' do
+        expect { Cpu.new([1, 2, 3], true, 1, "blah") }
+        .to raise_error(ArgumentError, 'phase_setting must be an Integer')
+      end
+    end
+  end
+
+  context 'with memory pointer out of bounds of input' do
+    describe '#compute' do
+      it 'raises an PointerOutOfBoundsException' do
+        expect {
+          Cpu.new([1,9,10,3,2,3,11,0,99,30,40,50], true, 1).tap do |cpu|
+            cpu.ind = 50
+            cpu.compute
+          end
+        }.to raise_error(
+          PointerOutOfBoundsException,
+          "50 is not within program opcode bounds"
+        )
+      end
+    end
+  end
+
   context 'with parameter mode off' do
     describe '#compute' do
       it 'adds if opcode is 1' do
-        expect(Cpu.new([1,9,10,3,2,3,11,0,99,30,40,50], 1, true).compute)
+        expect(Cpu.new([1,9,10,3,2,3,11,0,99,30,40,50], true, 1).compute)
           .to eq([3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50])
 
-        expect(Cpu.new([1,0,0,0,99], 1, true).compute)
+        expect(Cpu.new([1,0,0,0,99], true, 1).compute)
           .to eq([2,0,0,0,99])
 
         expect(Cpu.new([1,1,1,4,99,5,6,0,99], true).compute)
