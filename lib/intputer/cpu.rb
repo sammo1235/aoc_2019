@@ -34,16 +34,10 @@ class Cpu
         end
       end
 
-      if opcode.digits.size > 1
-        parameter_interpreter(opcode)
-        opcode = opcode.digits.first
-      else
-        parameter_interpreter
-      end
+      parameter_interpreter(opcode)
+      opcode = opcode.digits.first
 
-      if !VALID_OPCODES.include? opcode
-        raise InvalidOpcodeException.new("#{opcode} is not a valid opcode")
-      end
+      opcode_check(opcode)
 
       out = run_opcode(opcode, store_position)
 
@@ -104,15 +98,16 @@ class Cpu
     end
   end
 
-  def parameter_interpreter(opcode = nil)
-    param_codes = if opcode
-      opcode.digits[2..-1].map(&:zero?) << true
-    else
-      [true]*2
-    end
+  def parameter_interpreter(opcode)
+    param_codes = opcode.to_s.rjust(5, "0")[0..2].each_char.map(&:to_i).map(&:zero?).reverse
+    opcode_check(opcode.digits.first)
 
     (1..2).each do |position|
       if param_codes[position-1] # position mode
+        unless input[input[ind+position]] || [104, 4, 3].include?(opcode)
+          raise InvalidPositionException.new("Invalid program position: #{input[ind+position]} with opcode: #{opcode}")
+        end
+
         params[position.to_s] = input[input[ind+position]]
       else # immediate_mode
         params[position.to_s] = input[ind+position]
@@ -128,6 +123,12 @@ class Cpu
       @ind += 2
     when [1, 2, 7, 8].include?(opcode)
       @ind += 4
+    end
+  end
+
+  def opcode_check(opcode)
+    unless VALID_OPCODES.include? opcode
+      raise InvalidOpcodeException.new("#{opcode} is not a valid opcode")
     end
   end
 

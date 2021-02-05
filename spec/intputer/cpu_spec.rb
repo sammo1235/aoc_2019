@@ -3,9 +3,9 @@ require './lib/intputer/cpu'
 RSpec.describe Cpu do
   context 'with malformed input' do
     describe '#initialize' do
-      it 'raises an InputException' do
+      it 'raises an ArgumentError' do
         expect { Cpu.new(70909) }
-        .to raise_error(InputException, "Program must be of type Array but is an Integer")
+        .to raise_error(ArgumentError, "Program must be of type Array but is an Integer")
       end
     end
 
@@ -13,6 +13,18 @@ RSpec.describe Cpu do
       it 'raises InvalidOpcodeException with invalid program' do
         expect { Cpu.new([1, 2, 3, 0, 9, 8, 99, 0]).compute }
         .to raise_error(InvalidOpcodeException, "9 is not a valid opcode")
+      end
+    end
+
+    describe '#compute' do
+      it 'raises InvalidPositionException if positional params are OOB' do
+        expect { Cpu.new([1, 38, 23, 0, 3, 1, 99, 0]).compute }
+        .to raise_error(InvalidPositionException, "Invalid program position: 38 with opcode: 1")
+      end
+
+      it 'raises InvalidPositionException if positional params are OOB' do
+        expect { Cpu.new([2, 23, 56, 0, 3, 1, 99, 0]).compute }
+        .to raise_error(InvalidPositionException, "Invalid program position: 23 with opcode: 2")
       end
     end
   end
@@ -53,7 +65,7 @@ RSpec.describe Cpu do
     end
   end
 
-  context 'with parameter mode off' do
+  context 'with regular opcodes (no parameters)' do
     describe '#compute' do
       it 'adds if opcode is 1' do
         expect(Cpu.new([1,9,10,3,2,3,11,0,99,30,40,50], true, 1).compute)

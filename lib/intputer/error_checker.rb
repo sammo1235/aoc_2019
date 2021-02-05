@@ -1,7 +1,7 @@
 require 'forwardable'
 require 'byebug'
 
-class InputException < StandardError; end
+class InvalidPositionException < StandardError; end
 class PointerOutOfBoundsException < StandardError; end
 class InvalidOpcodeException < StandardError; end
 
@@ -16,7 +16,7 @@ class ErrorChecker
   end
 
   def check_errors
-    raise InputException.new("Program must be of type Array but is an #{input.class}") unless input.is_a? Array
+    raise ArgumentError.new("Program must be of type Array but is an #{input.class}") unless input.is_a? Array
 
     unless [true, false].include? diagnostic_mode
       raise ArgumentError, 'Diagnostic flag must be a boolean'
