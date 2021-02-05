@@ -8,6 +8,13 @@ RSpec.describe Cpu do
         .to raise_error(InputException, "Program must be of type Array but is an Integer")
       end
     end
+
+    describe '#compute' do
+      it 'raises InvalidOpcodeException with invalid program' do
+        expect { Cpu.new([1, 2, 3, 0, 9, 8, 99, 0]).compute }
+        .to raise_error(InvalidOpcodeException, "9 is not a valid opcode")
+      end
+    end
   end
 
 

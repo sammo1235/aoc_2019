@@ -5,6 +5,8 @@ class Cpu
   attr_reader :diagnostic_mode
   attr_accessor :ind, :input, :quantum_fluctuating_input, :phase_setting
 
+  VALID_OPCODES = (1..8).to_a.freeze
+
   def initialize(input, diagnostic_mode = false, quantum_fluctuating_input = nil, phase_setting = nil)
     @input = input
     @ind = 0
@@ -37,6 +39,10 @@ class Cpu
         opcode = opcode.digits.first
       else
         parameter_interpreter
+      end
+
+      if !VALID_OPCODES.include? opcode
+        raise InvalidOpcodeException.new("#{opcode} is not a valid opcode")
       end
 
       out = run_opcode(opcode, store_position)

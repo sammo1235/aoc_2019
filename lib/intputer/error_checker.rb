@@ -3,6 +3,7 @@ require 'byebug'
 
 class InputException < StandardError; end
 class PointerOutOfBoundsException < StandardError; end
+class InvalidOpcodeException < StandardError; end
 
 class ErrorChecker
   extend Forwardable
@@ -28,6 +29,8 @@ class ErrorChecker
   end
 
   def setting_name(value)
+    # this is only a rough guide, sometimes a
+    # different variable is returned if values are the same
     @cpu.instance_variables.each do |ivar_name|
       if @cpu.instance_variable_get(ivar_name) == value
         return ivar_name.to_s.sub(/^@/, '')
