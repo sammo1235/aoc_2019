@@ -103,6 +103,7 @@ class Cpu
 
   def parameter_interpreter(opcode)
     param_codes = opcode.to_s.rjust(5, "0")[0..2].each_char.map(&:to_i).reverse
+
     opcode_check(opcode.digits.first)
 
     (1..2).each do |position|
@@ -112,10 +113,10 @@ class Cpu
           raise InvalidPositionException.new("Invalid program position: #{input[ind+position]} with opcode: #{opcode}")
         end
 
-        params[position.to_s] = input[input[ind+position]|| 0]
-      when 1 # immediate_mode
+        params[position.to_s] = input[input[ind+position] || 0]
+      when 1 # immediate mode
         params[position.to_s] = input[ind+position]
-      when 2
+      when 2 # relative base mode
         params[position.to_s] = input[input[ind+position] + relative_base]
       end
     end
@@ -132,18 +133,9 @@ class Cpu
         raise InvalidOpcodeException.new("invalid opcode parameter")
       end
     elsif opcode == 3
-      # for input/output we want the index not the value at that index
+      # for input we want the index not the value at that index
       case param_codes[0]
       when 0
-        params["1"] = input[ind+1]
-      when 2
-        params["1"] = input[ind+1] + relative_base
-      end
-    elsif opcode == 4
-      case param_codes[0]
-      when 0
-        params["1"] = input[input[ind+1]]
-      when 1
         params["1"] = input[ind+1]
       when 2
         params["1"] = input[ind+1] + relative_base
