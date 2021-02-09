@@ -1,7 +1,7 @@
 require './lib/1/rocket_equation'
 
 RSpec.describe RocketEquation do
-  let(:equation) { described_class.new('./spec/fixtures/data_day_1.txt') }
+  let(:equation) { described_class.new('./spec/fixtures/1.txt') }
 
   describe '#part_one' do
     it 'solves part one of the problem' do

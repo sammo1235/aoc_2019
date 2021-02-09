@@ -3,7 +3,7 @@ require './lib/3/crossed_wires'
 RSpec.describe CrossedWires do
   let(:sample_wires) { described_class.new('./spec/fixtures/sample_day_3.txt') }
   let(:sample_wires_2) { described_class.new('./spec/fixtures/sample_2_day_3.txt') }
-  let(:actual_wires) { described_class.new('./spec/fixtures/data_day_3.txt') }
+  let(:actual_wires) { described_class.new('./spec/fixtures/3.txt') }
 
   context 'with sample data' do
     describe '#part_one' do

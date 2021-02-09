@@ -1,7 +1,7 @@
 require './lib/6/orbit_map'
 
 RSpec.describe OrbitMap do
-  let(:orbits) { described_class.new('./spec/fixtures/data_day_6.txt') }
+  let(:orbits) { described_class.new('./spec/fixtures/6.txt') }
 
   context 'with sample data' do
     let(:orbits) { described_class.new('./spec/fixtures/sample_day_6.txt') }

@@ -1,7 +1,7 @@
 require './lib/7/amplification_circuit'
 
 RSpec.describe AmplificationCircuit do
-  let(:amp) { described_class.new('./spec/fixtures/data_day_7.txt') }
+  let(:amp) { described_class.new('./spec/fixtures/7.txt') }
 
   context 'with sample program and fixed phase setting sequence' do
     let(:amp) { described_class.new('./spec/fixtures/sample_day_7.txt', [4,3,2,1,0]) }

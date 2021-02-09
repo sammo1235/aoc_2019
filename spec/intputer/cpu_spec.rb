@@ -11,20 +11,20 @@ RSpec.describe Cpu do
 
     describe '#compute' do
       it 'raises InvalidOpcodeException with invalid program' do
-        expect { Cpu.new([1, 2, 3, 0, 9, 8, 99, 0]).compute }
-        .to raise_error(InvalidOpcodeException, "9 is not a valid opcode")
+        expect { Cpu.new([1, 2, 3, 0, 0, 8, 99, 0]).compute }
+        .to raise_error(InvalidOpcodeException, "0 is not a valid opcode")
       end
     end
 
     describe '#compute' do
       it 'raises InvalidPositionException if positional params are OOB' do
-        expect { Cpu.new([1, 38, 23, 0, 3, 1, 99, 0]).compute }
-        .to raise_error(InvalidPositionException, "Invalid program position: 38 with opcode: 1")
+        expect { Cpu.new([1, -38, 23, 0, 3, 1, 99, 0]).compute }
+        .to raise_error(InvalidPositionException, "Invalid program position: -38 with opcode: 1")
       end
 
       it 'raises InvalidPositionException if positional params are OOB' do
-        expect { Cpu.new([2, 23, 56, 0, 3, 1, 99, 0]).compute }
-        .to raise_error(InvalidPositionException, "Invalid program position: 23 with opcode: 2")
+        expect { Cpu.new([2, -23, 56, 0, 3, 1, 99, 0]).compute }
+        .to raise_error(InvalidPositionException, "Invalid program position: -23 with opcode: 2")
       end
     end
   end
@@ -54,12 +54,12 @@ RSpec.describe Cpu do
       it 'raises an PointerOutOfBoundsException' do
         expect {
           Cpu.new([1,9,10,3,2,3,11,0,99,30,40,50], true, 1).tap do |cpu|
-            cpu.ind = 50
+            cpu.ind = -50
             cpu.compute
           end
         }.to raise_error(
           PointerOutOfBoundsException,
-          "50 is not within program opcode bounds"
+          "-50 is not within program opcode bounds"
         )
       end
     end

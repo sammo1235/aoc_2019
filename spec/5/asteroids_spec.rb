@@ -1,7 +1,7 @@
 require './lib/5/asteroids'
 
 RSpec.describe Asteroids do
-  let(:asteroids) { described_class.new('./spec/fixtures/data_day_5.txt') }
+  let(:asteroids) { described_class.new('./spec/fixtures/5.txt') }
 
   context 'with sample data' do
     let(:asteroids) { described_class.new('./spec/fixtures/sample_day_5.txt', true) }

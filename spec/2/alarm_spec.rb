@@ -2,7 +2,7 @@ require './lib/2/alarm'
 
 RSpec.describe Alarm do
   let(:sample_alarm) { described_class.new('./spec/fixtures/sample_day_2.txt') }
-  let(:real_alarm) { described_class.new('./spec/fixtures/data_day_2.txt') }
+  let(:real_alarm) { described_class.new('./spec/fixtures/2.txt') }
 
   context 'with sample data' do
     describe '#part one' do
