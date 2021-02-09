@@ -8,11 +8,6 @@ class SensorBoost
     @input = File.open(input, 'r').readlines[0].split(',').map(&:to_i)
     @diagnostic_mode = diagnostic_mode
     @quantum_fluctuating_input = options[:quantum_fluctuating_input]
-    if options[:extra_memory]
-      10000.times do
-        @input << 0
-      end
-    end
   end
 
   def part_one

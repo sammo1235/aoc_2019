@@ -13,6 +13,18 @@ RSpec.describe Cpu do
       it 'raises InvalidOpcodeException with invalid program' do
         expect { Cpu.new([1, 2, 3, 0, 0, 8, 99, 0]).compute }
         .to raise_error(InvalidOpcodeException, "0 is not a valid opcode")
+
+        expect { Cpu.new([3111, 2, 3, 5, 0, 8, 99, 0]).compute }
+        .to raise_error(InvalidOpcodeException, "3111 is not a valid opcode")
+
+        expect { Cpu.new([30001, 2, 3, 0, 5, 8, 99, 0]).compute }
+        .to raise_error(InvalidOpcodeException, "Invalid opcode parameter 3")
+
+        expect { Cpu.new([301, 2, 3, 0, 5, 8, 99, 0]).compute }
+        .to raise_error(InvalidOpcodeException, "301 is not a valid opcode")
+
+        expect { Cpu.new([40101, 2, 3, 0, 5, 8, 99, 0]).compute }
+        .to raise_error(InvalidOpcodeException, "Invalid opcode parameter 4")
       end
     end
 
@@ -177,6 +189,21 @@ RSpec.describe Cpu do
     describe 'with input value of > 8' do
       it 'should output 1001' do
         expect(Cpu.new(input, false, 11).compute).to eq(1001)
+      end
+    end
+  end
+
+  context 'with relative base' do
+    describe 'it handles opcode 9, which will add the one parameter to opcode 9
+              (in position, immediate or relative mode) to the relative base' do
+      it 'handles opcode 9' do
+        expect(Cpu.new([109, -1, 104, 1, 99]).compute).to eq(1)
+        expect(Cpu.new([109, -1, 204, 1, 99]).compute).to eq(109)
+        expect(Cpu.new([109, 1, 9, 2, 204, -6, 99]).compute).to eq(204)
+        expect(Cpu.new([109, 1, 109, 9, 204, -6, 99]).compute).to eq(204)
+        expect(Cpu.new([109, 1, 209, -1, 204, -106, 99]).compute).to eq(204)
+        expect(Cpu.new([109, 1, 3, 3, 204, 2, 99], false, 6).compute).to eq(6)
+        expect(Cpu.new([109, 1, 203, 2, 204, 2, 99], false, 7).compute).to eq(7)
       end
     end
   end

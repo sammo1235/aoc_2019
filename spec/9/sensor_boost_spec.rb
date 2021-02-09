@@ -1,10 +1,10 @@
 require './lib/9/sensor_boost'
 
 RSpec.describe SensorBoost do
-  let(:boost) { described_class.new('./spec/fixtures/9.txt', false, extra_memory: true) }
+  let(:boost) { described_class.new('./spec/fixtures/9.txt', false) }
 
   context 'with sample data' do
-    let(:boost) { described_class.new('./spec/fixtures/9s.txt', true, extra_memory: true) }
+    let(:boost) { described_class.new('./spec/fixtures/9s.txt', true) }
     let(:boost2) { described_class.new('./spec/fixtures/9s2.txt', false) }
     let(:boost3) { described_class.new('./spec/fixtures/9s3.txt', false) }
 

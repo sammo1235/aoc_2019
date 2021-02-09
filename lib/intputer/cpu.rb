@@ -34,10 +34,11 @@ class Cpu
         end
       end
 
+      opcode_check(opcode)
+
       parameter_interpreter(opcode)
       opcode = opcode.digits.first
 
-      opcode_check(opcode)
 
       out = run_opcode(opcode)
 
@@ -104,7 +105,7 @@ class Cpu
   def parameter_interpreter(opcode)
     param_codes = opcode.to_s.rjust(5, "0")[0..2].each_char.map(&:to_i).reverse
 
-    opcode_check(opcode.digits.first)
+    opcode_check(opcode)
 
     (1..2).each do |position|
       case param_codes[position-1] # position mode
@@ -118,11 +119,13 @@ class Cpu
         params[position.to_s] = input[ind+position]
       when 2 # relative base mode
         params[position.to_s] = input[input[ind+position] + relative_base]
+      else
+        raise InvalidOpcodeException.new("#{opcode} is not a valid opcode")
       end
     end
 
-    opcode = opcode.digits.first
-    if [1, 2, 7, 8].include? opcode
+    op = opcode.digits.first
+    if [1, 2, 7, 8].include? op
       # third param must be positional or relative base
       case param_codes[2]
       when 0
@@ -130,9 +133,9 @@ class Cpu
       when 2
         params["store"] = input[ind+3] + relative_base
       else
-        raise InvalidOpcodeException.new("invalid opcode parameter")
+        raise InvalidOpcodeException.new("Invalid opcode parameter #{opcode.digits.last}")
       end
-    elsif opcode == 3
+    elsif op == 3
       # for input we want the index not the value at that index
       case param_codes[0]
       when 0
@@ -155,8 +158,15 @@ class Cpu
   end
 
   def opcode_check(opcode)
-    unless VALID_OPCODES.include? opcode
-      raise InvalidOpcodeException.new("#{opcode} is not a valid opcode")
+    case opcode.digits.size
+    when 1
+      return unless opcode == 0
+    when 3
+      return if opcode.to_s.match? /[0-2]{1,}0[1-9]/
+    when 4, 5
+      return if opcode.to_s.match? /[0-2]{2,}0[1-9]/
     end
+
+    raise InvalidOpcodeException.new("#{opcode} is not a valid opcode")
   end
 end
