@@ -20,20 +20,20 @@ class SpacePolice
   def part_two
     cpu = Cpu.new(@input, false, 0, 1, painting_mode: true)
     move_robot(cpu)
-    hull = Array.new(20) {Array.new(['.']*60) }
+    hull = Array.new(7) {Array.new(['.']*40) }
     panels.each do |coord, colour|
-      yc = coord.split('y')[1].to_i + 10
-      xc = coord.scan(/^x([0-9]{1,})/)[0][0].to_i + 10
+      yc = coord.split('y')[1].to_i + 6
+      xc = coord.scan(/^x([0-9]{1,})/)[0][0].to_i 
       hull[yc][xc] = colour
     end
     # print this to see message
-    hull.map {|line| line.join }.join("\n")
+    # hull.map {|line| line.join }.join("\n")
+    hull
   end
 
   def move_robot(cpu)
     moves = 0
     loop do
-      # if new panel is white, input = 1
       cpu.quantum_fluctuating_input = if panels["x#{@x}y#{@y}"] == '#'
         1
       else
@@ -57,7 +57,7 @@ class SpacePolice
       end
 
       direction = cpu.continue
-      # output = left 90 if 0, right 90 if 1
+
       if direction.is_a? Array
         break
       elsif direction == 0
@@ -70,9 +70,8 @@ class SpacePolice
         raise StandardError => e
       end
 
-      # move robot
       case @dir
-      when 0 # up
+      when 0
         @y += 1
       when 90
         @x += 1
