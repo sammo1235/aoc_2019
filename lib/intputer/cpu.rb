@@ -3,11 +3,11 @@ require_relative 'error_checker'
 
 class Cpu
   attr_reader :diagnostic_mode
-  attr_accessor :ind, :input, :quantum_fluctuating_input, :phase_setting, :relative_base, :params
+  attr_accessor :ind, :input, :quantum_fluctuating_input, :phase_setting, :relative_base, :params, :painting_mode
 
   VALID_OPCODES = (1..9).to_a.freeze
 
-  def initialize(input, diagnostic_mode = false, quantum_fluctuating_input = nil, phase_setting = nil)
+  def initialize(input, diagnostic_mode = false, quantum_fluctuating_input = nil, phase_setting = nil, options = {})
     @input = input
     @ind = 0
     @params = {}
@@ -15,6 +15,7 @@ class Cpu
     @quantum_fluctuating_input = quantum_fluctuating_input
     @phase_setting = phase_setting
     @relative_base = 0
+    @painting_mode = options.fetch(:painting_mode, false)
     ErrorChecker.new(self)
   end
 
@@ -44,6 +45,7 @@ class Cpu
 
       if opcode == 4
         return input if @diagnostic_mode
+        return out if @painting_mode
         return out if out > 0
       end
 
@@ -51,17 +53,21 @@ class Cpu
     end
   end
 
+  def continue
+    self.ind += 2
+    compute
+  end
+
   private
 
   def run_opcode(opcode)
     case opcode
     when 1
-      # debugger if store_position != params['store']
       input[params['store']] = params.values[0..1].reduce(&:+)
     when 2
       input[params['store']] = params.values[0..1].reduce(&:*)
     when 3
-      input[params.values.first] = if phase_setting
+      input[params.values[0]] = if phase_setting
         phase_setting
       elsif quantum_fluctuating_input
         quantum_fluctuating_input
@@ -114,7 +120,11 @@ class Cpu
           raise InvalidPositionException.new("Invalid program position: #{input[ind+position]} with opcode: #{opcode}")
         end
 
-        params[position.to_s] = input[input[ind+position] || 0]
+        params[position.to_s] = if input[input[ind+position]]
+          input[input[ind+position]]
+        else
+          0
+        end
       when 1 # immediate mode
         params[position.to_s] = input[ind+position]
       when 2 # relative base mode

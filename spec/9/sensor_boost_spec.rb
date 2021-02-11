@@ -35,7 +35,7 @@ RSpec.describe SensorBoost do
     end
 
     describe '#part two' do
-      let(:boost) { described_class.new('./spec/fixtures/9.txt', false, extra_memory: true, quantum_fluctuating_input: 2) }
+      let(:boost) { described_class.new('./spec/fixtures/9.txt', false, quantum_fluctuating_input: 2) }
 
       it 'solves part two' do
         expect(boost.part_two).to eq(53088)
