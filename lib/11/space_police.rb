@@ -1,20 +1,37 @@
 require './lib/intputer/cpu'
 
 class SpacePolice
-  attr_accessor :input, :dir, :x, :y
+  attr_accessor :input, :dir, :x, :y, :panels
 
   def initialize(input)
     @input = File.open(input, 'r').readlines[0].split(',').map(&:to_i)
     @dir = 0
     @x = 0
     @y = 0
+    @panels = {}
   end
 
   def part_one
-    panels = {}
     cpu = Cpu.new(@input, false, 0, nil, painting_mode: true)
+    move_robot(cpu)
+    panels.keys.size
+  end
+
+  def part_two
+    cpu = Cpu.new(@input, false, 0, 1, painting_mode: true)
+    move_robot(cpu)
+    hull = Array.new(20) {Array.new(['.']*60) }
+    panels.each do |coord, colour|
+      yc = coord.split('y')[1].to_i + 10
+      xc = coord.scan(/^x([0-9]{1,})/)[0][0].to_i + 10
+      hull[yc][xc] = colour
+    end
+    # print this to see message
+    hull.map {|line| line.join }.join("\n")
+  end
+
+  def move_robot(cpu)
     moves = 0
-    already_painted = 0
     loop do
       # if new panel is white, input = 1
       cpu.quantum_fluctuating_input = if panels["x#{@x}y#{@y}"] == '#'
@@ -22,7 +39,6 @@ class SpacePolice
       else
         0
       end
-
 
       paint = if moves < 1
         cpu.compute
@@ -68,8 +84,6 @@ class SpacePolice
         raise StandardError => e
       end
       moves += 1
-      # debugger
     end
-    panels.keys.size
   end
 end
