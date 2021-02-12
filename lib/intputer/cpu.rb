@@ -187,9 +187,9 @@ class Cpu
     when 1
       return unless opcode == 0
     when 3
-      return if opcode.to_s.match? /[0-2]{1,}0[1-9]/
+      return if opcode.to_s.match? /[0-2]{1}0[1-9]/
     when 4
-      return if opcode.to_s.match? /[0-2]{2,}0[1-9]/
+      return if opcode.to_s.match? /[0-2]{2}0[1-9]/
     when 5
       return if opcode.to_s.match? /[0-2]{3}0[1-9]/
     end
