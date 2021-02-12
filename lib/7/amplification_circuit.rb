@@ -52,11 +52,14 @@ class AmplificationCircuit
     while true
       phase_setting_sequence.each_with_index do |phase_setting, index|
         amp = amps[index.to_s] || Cpu.new(get_input, false, input_signal, phase_setting)
-        amp.ind += 2 if amp.phase_setting.nil? # continue the program
         amp.quantum_fluctuating_input = input_signal
 
-        output = amp.compute
-
+        if amp.phase_setting.nil?
+          output = amp.continue 
+        else
+          output = amp.compute
+        end
+        
         if output.is_a?(Array)
           final_signals << input_signal
           return
