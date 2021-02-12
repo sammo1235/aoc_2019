@@ -18,13 +18,13 @@ RSpec.describe Cpu do
         .to raise_error(InvalidOpcodeException, "3111 is not a valid opcode")
 
         expect { Cpu.new([30001, 2, 3, 0, 5, 8, 99, 0]).compute }
-        .to raise_error(InvalidOpcodeException, "Invalid opcode parameter 3")
+        .to raise_error(InvalidOpcodeException, "30001 is not a valid opcode")
 
         expect { Cpu.new([301, 2, 3, 0, 5, 8, 99, 0]).compute }
         .to raise_error(InvalidOpcodeException, "301 is not a valid opcode")
 
         expect { Cpu.new([40101, 2, 3, 0, 5, 8, 99, 0]).compute }
-        .to raise_error(InvalidOpcodeException, "Invalid opcode parameter 4")
+        .to raise_error(InvalidOpcodeException, "40101 is not a valid opcode")
       end
     end
 
