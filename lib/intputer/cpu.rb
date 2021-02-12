@@ -58,6 +58,21 @@ class Cpu
     compute
   end
 
+  def run_until_halt
+    stdout = []
+    stdout << compute
+
+    loop do  
+      out = continue
+      if out.is_a? Array
+        break
+      elsif out.is_a? Integer
+        stdout << out
+      end
+    end
+    stdout
+  end
+
   private
 
   def run_opcode(opcode)

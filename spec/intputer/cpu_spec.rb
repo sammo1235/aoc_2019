@@ -207,4 +207,22 @@ RSpec.describe Cpu do
       end
     end
   end
+
+  context 'with test programs' do
+    describe '#run_until_halt' do
+      it 'should output hello world' do
+        res = Cpu.new([4,3,101,72,14,3,101,1,4,4,5,3,16,99,29,7,0,3,-67,-12,87,-8,3,-6,-8,-67,-23,-10]).run_until_halt
+        expect(res).to eq([72, 101, 108, 108, 111, 44, 32, 119, 111, 114, 108, 100, 33, 10])
+        expect(res.map(&:chr).join).to eq("Hello, world!\n")
+      end
+    end
+
+    describe '#run_until_halt' do
+      it 'should output 1..10' do
+        res = Cpu.new([4,17,4,19,1001,17,1,17,8,17,18,16,1006,16,0,99,-1,1,11,32]).run_until_halt
+        res = res.map.with_index {|num, i| i % 2 == 0 ? num : num.chr }.join.strip
+        expect(res).to eq("1 2 3 4 5 6 7 8 9 10")
+      end
+    end
+  end
 end
