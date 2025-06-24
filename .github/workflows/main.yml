@@ -5,7 +5,6 @@ name: Mock Deploy
 on:
   push:
     branches: [ $default-branch ]
-                                   # containerDefinitions section of your task definition
 
 permissions:
   contents: read
