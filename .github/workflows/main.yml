@@ -15,3 +15,13 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+  
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        run: |
+          # does this work without?
+          bundle
